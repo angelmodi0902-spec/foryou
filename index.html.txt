@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>for you 💖</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #ffd6e7, #e0c3fc);
+    font-family: 'Quicksand';
+}
+
+.box {
+    text-align: center;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(15px);
+    padding: 30px;
+    border-radius: 25px;
+    transition: 0.3s;
+}
+
+h1 {
+    font-family: 'Pacifico';
+    color: #ff4da6;
+}
+
+/* aesthetic dots */
+.dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px;
+}
+
+.dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #ffffff80;
+}
+
+.dot.filled {
+    background: #ff4da6;
+}
+
+/* keypad */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 70px);
+    gap: 10px;
+    justify-content: center;
+}
+
+button {
+    padding: 15px;
+    font-size: 20px;
+    border-radius: 15px;
+    border: none;
+    background: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.1);
+}
+
+/* shake animation */
+.shake {
+    animation: shake 0.4s;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    50% { transform: translateX(8px); }
+    75% { transform: translateX(-8px); }
+    100% { transform: translateX(0); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="box" id="box">
+    <h1>guess the password 💌</h1>
+
+    <div class="dots" id="dots"></div>
+
+    <div class="grid" id="buttons"></div>
+</div>
+
+<!-- sounds -->
+<audio id="tap" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b6b1b.mp3?filename=click-124467.mp3"></audio>
+<audio id="success" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2b6d3c1b6c.mp3?filename=success-1-6297.mp3"></audio>
+
+<script>
+let password = "";
+const correct = "190125";
+const siteLock = "1122"; // 🔐 CHANGE THIS (site password)
+
+let dots = document.getElementById("dots");
+
+function renderDots() {
+    dots.innerHTML = "";
+    for (let i = 0; i < 6; i++) {
+        let d = document.createElement("div");
+        d.className = "dot";
+        if (i < password.length) d.classList.add("filled");
+        dots.appendChild(d);
+    }
+}
+
+function addDigit(num) {
+    document.getElementById("tap").play();
+
+    if (password.length < 6) {
+        password += num;
+        renderDots();
+    }
+
+    if (password.length === 6) {
+        if (password === correct) {
+            document.getElementById("success").play();
+            setTimeout(() => {
+                window.location.href = "success.html";
+            }, 500);
+        } else {
+            password = "";
+            renderDots();
+
+            let box = document.getElementById("box");
+            box.classList.add("shake");
+            setTimeout(() => box.classList.remove("shake"), 400);
+        }
+    }
+}
+
+/* keypad */
+let container = document.getElementById("buttons");
+
+for (let i = 1; i <= 9; i++) {
+    let btn = document.createElement("button");
+    btn.innerText = i;
+    btn.onclick = () => addDigit(i);
+    container.appendChild(btn);
+}
+
+let zero = document.createElement("button");
+zero.innerText = 0;
+zero.onclick = () => addDigit(0);
+container.appendChild(document.createElement("div"));
+container.appendChild(zero);
+
+renderDots();
+
+/* 🔐 SITE PASSWORD PROTECTION */
+let access = prompt("enter access code 💭");
+
+if (access !== siteLock) {
+    document.body.innerHTML = "<h2 style='text-align:center;margin-top:40vh;'>no access 💔</h2>";
+}
+</script>
+
+</body>
+</html>
